@@ -2,14 +2,27 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\PostRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PostRepository;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
  * 
- * @ApiResource()
+ * @ApiResource(
+ * 
+ *      normalizationContext={"groups"={"read:Post:collection"}},
+ *      denormalizationContext={"groups"={"write:Post:item"}},
+ * 
+ *      itemOperations={
+ *          "put",
+ *          "delete",
+ *          "get"={
+ *              "normalization_context"={"groups"={"read:Post:collection", "read:Post:item", "read:Post:and:Category:item"}}
+ *          }
+ *      }
+ * )
  */
 class Post
 {
@@ -17,26 +30,31 @@ class Post
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"read:Post:collection"}) 
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read:Post:collection", "write:Post:item"}) 
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read:Post:collection", "write:Post:item"}) 
      */
     private $slug;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"read:Post:item", "write:Post:item"}) 
      */
     private $content;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"read:Post:item"}) 
      */
     private $createdAt;
 
@@ -47,8 +65,15 @@ class Post
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="posts")
+     * @Groups({"read:Post:item", "write:Post:item"}) 
      */
     private $category;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+        $this->udatedAt = new \DateTime();
+    }
 
     public function getId(): ?int
     {
