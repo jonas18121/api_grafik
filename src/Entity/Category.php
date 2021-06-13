@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=CategoryRepository::class)
@@ -26,7 +27,9 @@ class Category
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read:Post:and:Category:item"}) 
+     * @Groups({"read:Post:and:Category:item", "write:Post:item"}) 
+     * 
+     * @Assert\Length(min = 5, minMessage = "Le nom de la catégorie doit comporter au minimum 5 caractères" )
      */
     private $name;
 

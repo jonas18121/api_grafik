@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PostRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
@@ -37,6 +38,7 @@ class Post
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"read:Post:collection", "write:Post:item"}) 
+     * @Assert\Length(min = 5, minMessage = "Le titre de votre article doit comporter au minimum 5 caractères" )
      */
     private $title;
 
@@ -64,8 +66,9 @@ class Post
     private $updatedAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="posts")
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="posts", cascade={"persist"})
      * @Groups({"read:Post:item", "write:Post:item"}) 
+     * @Assert\Valid()
      */
     private $category;
 
