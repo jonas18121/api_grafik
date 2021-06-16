@@ -4,18 +4,28 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PostRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+
+
+// curl -X GET "http://127.0.0.1:8000/api/posts?page=1" -H "accept: application/json"
+
 
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
  * 
  * @ApiResource(
- * 
+ *      
  *      normalizationContext={"groups"={"read:Post:collection"}},
  *      denormalizationContext={"groups"={"write:Post:item"}},
- * 
+ *      attributes={
+ *          "pagination_items_per_page"=2,
+ *          "maximum_items_per_page"=2,
+ *          "pagination_client_items_per_page"=true
+ *      },
  *      itemOperations={
  *          "put",
  *          "delete",
@@ -24,6 +34,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      }
  * )
+ * 
+ * @ApiFilter(SearchFilter::class, properties={"id": "exact", "title": "partial"})
  */
 class Post
 {
