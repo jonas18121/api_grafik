@@ -4,14 +4,18 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PostRepository;
+use App\Controller\PostPublishController;
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 
 // curl -X GET "http://127.0.0.1:8000/api/posts?page=1" -H "accept: application/json"
+
+
+// vidéo 7 stoppé a 8:18
 
 
 /**
@@ -31,6 +35,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "delete",
  *          "get"={
  *              "normalization_context"={"groups"={"read:Post:collection", "read:Post:item", "read:Post:and:Category:item"}}
+ *          },
+ *          "publish"={
+ *              "method"="POST",
+ *              "path"="/posts{id}/publish",
+ *              "controller"=PostPublishController::class
  *          }
  *      }
  * )
@@ -83,6 +92,12 @@ class Post
      * @Assert\Valid()
      */
     private $category;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default": "0"})
+     * @Groups({"read:Post:collection"}) 
+     */
+    private $online = false;
 
     public function __construct()
     {
@@ -163,6 +178,18 @@ class Post
     public function setCategory(?Category $category): self
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getOnline(): ?bool
+    {
+        return $this->online;
+    }
+
+    public function setOnline(bool $online): self
+    {
+        $this->online = $online;
 
         return $this;
     }
