@@ -13,7 +13,26 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=CategoryRepository::class)
  * 
- * @ApiResource()
+ * @ApiResource(
+ * 
+ *      normalizationContext={
+ *          "openapi_definition_name"="List_categories"
+ *      },
+ * 
+ *      denormalizationContext={
+ *          "openapi_definition_name"="write_one_category"
+ *      },
+ * 
+ *      itemOperations={
+ *          "put",
+ *          "delete",
+ *          "get"={
+ *              "normalization_context"={
+ *                  "openapi_definition_name"="read_one_category"
+ *               }
+ *           }
+ *      }
+ * )
  */
 class Category
 {

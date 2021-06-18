@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PostRepository;
 use App\Controller\PostPublishController;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -15,7 +16,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 // curl -X GET "http://127.0.0.1:8000/api/posts?page=1" -H "accept: application/json"
 
 
-// vidéo 7 stoppé a 8:18
+// vidéo 7 commencer à 08:08 et stoppé a 14:14
 
 
 /**
@@ -23,23 +24,46 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * 
  * @ApiResource(
  *      
- *      normalizationContext={"groups"={"read:Post:collection"}},
- *      denormalizationContext={"groups"={"write:Post:item"}},
+ *      normalizationContext={
+ *          "groups"={"read:Post:collection"},
+ *          "openapi_definition_name"="List_articles"
+ *      },
+ * 
+ *      denormalizationContext={
+ *          "groups"={"write:Post:item"}, 
+ *          "openapi_definition_name"="write_one_article"
+ *      },
+ * 
  *      attributes={
  *          "pagination_items_per_page"=2,
  *          "maximum_items_per_page"=2,
  *          "pagination_client_items_per_page"=true
  *      },
+ * 
  *      itemOperations={
  *          "put",
  *          "delete",
  *          "get"={
- *              "normalization_context"={"groups"={"read:Post:collection", "read:Post:item", "read:Post:and:Category:item"}}
+ *              "normalization_context"={
+ *                  "groups"={"read:Post:collection", "read:Post:item", "read:Post:and:Category:item"},
+ *                  "openapi_definition_name"="read_one_article"
+ *              }
  *          },
  *          "publish"={
  *              "method"="POST",
  *              "path"="/posts{id}/publish",
- *              "controller"=PostPublishController::class
+ *              "controller"=PostPublishController::class,
+ *              "openapi_context"={
+ *                  "summary"="Permet de publier un article",
+ *                  "requestBody"={
+ *                      "content"={
+ *                          "application/json"={
+ *                              "schema"={ },
+ *                              "example"={ }
+ *                          }
+ *                      }
+ *                  }
+ *              }
  *          }
  *      }
  * )
@@ -96,6 +120,10 @@ class Post
     /**
      * @ORM\Column(type="boolean", options={"default": "0"})
      * @Groups({"read:Post:collection"}) 
+     * @ApiProperty(openapiContext={
+     *      "type"="boolean",
+     *      "description"="En ligne ou pas ?"
+     * })
      */
     private $online = false;
 
