@@ -1,8 +1,8 @@
-# Opération personnalisé
+# Opération personnalisé ( partie 1 )
 
 Ici on va voir comment créer de nouvelle opération pour nos articles
 
-On va découpé les modification en plusieurs étapes
+On va découpé les modifications en plusieurs étapes
 
 ## Etape 1 : Création du controlleur personnalisé
 
@@ -38,7 +38,7 @@ On va découpé les modification en plusieurs étapes
 
     - L'opération s'appellera `"publish"`
     
-    - Dans `"method"`, on passe la méthode à utiliser, ici ce sera `"POST"` 
+    - Dans `"method"`, on passe le verbe HTTP à utiliser, ici ce sera `"POST"` 
 
     - Dans `"path"`, on passe le chemin qui va nous permettre de faire cette opération, ici ce sera `"/posts{id}/publish"` 
 
@@ -155,7 +155,7 @@ Dans `Post.php`
 
 - ApiPlateform va automatiquement mettre dans l'argument `$data`, les données de l'article qui sera traiter, grace au `DataProvider`  
 
-    - Si dans `"publish"` de `Post.php` on met `"read"=false`, l'argument `$data` ne recevra pas de données d'aucun article, ApiPlateform va croire que l'on crée un nouvel article en entier, alors que l'on veut seulment modifier `online` d'un article déjà existant
+    - Si dans `"publish"` de `Post.php` on met `"read"=false`, l'argument `$data` ne recevra pas de données d'aucun article, ApiPlateform va croire que l'on crée un nouvel article en entier. Ici ce n'est pas ce qu'on veut, on veut seulment modifier la propriété `online` d'un article déjà existant
 
                 "publish"={
             *     "method"="POST",
@@ -164,7 +164,7 @@ Dans `Post.php`
             *     "read"=false
             *   }
 
-- Ici on va juste modifier la propriété `online`  de l'article qui est traiter à `true`, `$data->setOnline(true);`
+- Ici on va juste modifier la propriété `online` à `true`,  de l'article qui est traiter , `$data->setOnline(true);`
 
 - Puis On retourne l'article
 
@@ -201,13 +201,15 @@ Dans `PostPublishController.php`
 
 Site openApi : https://oai.github.io/Documentation/start-here.html
 
+site openApi description de paramètre : https://swagger.io/docs/specification/describing-parameters/
+
 Site ApiPlateform : https://api-platform.com/docs/core/openapi/
 
 OpenApi nous permet de documenter le fonctionnement d'une api
 
 L'outil `SwaggerUi` qu'on a par defaut avec apiPlateform nous permet de lire depuis son interface `OpenApi`
 
-On peut exporter des fichiers de description depuis le `SwaggerUi` en format yaml de pour `OpenApi`
+On peut exporter des fichiers de description depuis le `SwaggerUi` en format yaml  pour `OpenApi`
 
 Si on execute la commande ci-dessous, on verra les différentes commandes pour exporter un fichier
 
@@ -253,7 +255,7 @@ Si on execute la commande ci-dessous, on verra des données en format yaml qui c
 
 - Dans `normalizationContext` on peut utiliser `"openapi_definition_name"` pour bien documenter la partie `Schema` qui est tout en bas dans l'interface de apiPlateform, en lui donnant un bon nom
 
-- Dans `normalizationContext` la normalisation globale pour les collection, `"openapi_definition_name"="List_articles"`, le nom qui correspond le mieux est `"List_articles"`, comme ça va afficher une liste d'articles
+- Dans `normalizationContext` la normalisation globale pour les collections, `"openapi_definition_name"="List_articles"`, le nom qui correspond le mieux est `"List_articles"`, comme ça va afficher une liste d'articles
 
 - Dans `denormalizationContext` la dénormalisation globale pour un article précis, `"openapi_definition_name"="write_one_article"`, le nom qui correspond le mieux est `"write_one_article"`,  comme ça va agir pour les verbes http POST, PUT et PATCH
 

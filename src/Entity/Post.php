@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PostRepository;
+use App\Controller\PostCountController;
 use App\Controller\PostPublishController;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
@@ -38,6 +39,48 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *          "pagination_items_per_page"=2,
  *          "maximum_items_per_page"=2,
  *          "pagination_client_items_per_page"=true
+ *      },
+ * 
+ *      collectionOperations={
+ *          "get",
+ *          "post",
+ * 
+ *          "count"={
+ *              "method"="GET",
+ *              "path"="/posts/count",
+ *              "controller"=PostCountController::class,
+ *              "read"=false,
+ *              "pagination_enabled"=false,
+ *              "filters"={},
+ *              "openapi_context"={
+ *                  "summary"="Récupère le nombre total d'articles",
+ *                  "parameters"={
+ *                      {
+ *                          "in"="query",
+ *                          "name"="online",
+ *                          "schema"={
+ *                              "type"="integer",
+ *                              "maximun"=1,
+ *                              "minimum"=0
+ *                          },
+ *                          "description"="Entrer le chiffre 1 pour voir les articles en ligne, Entrer le chiffre 0 pour voir les articles hors ligne"
+ *                      }
+ *                  },
+ *                  "responses"={
+ *                      "200"={
+ *                          "description"="L'opération à reussie",
+ *                          "content"={
+ *                              "application/json"={
+ *                                  "schema"={
+ *                                      "type"="integer",
+ *                                      "example"=3
+ *                                  }
+ *                              }
+ *                          }
+ *                      }
+ *                  }
+ *              }
+ *          }
  *      },
  * 
  *      itemOperations={
