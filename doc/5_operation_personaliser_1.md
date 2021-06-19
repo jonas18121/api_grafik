@@ -28,7 +28,7 @@ On va découpé les modifications en plusieurs étapes
 
 #### Le controlleur personnalisé
 
-- Dans `itemOperations` on va créer notre opération qui concernera un item en particulier à la fois
+- Dans `itemOperations` on va créer notre opération qui concernera à chaque fois un item en particulier
 
         "publish"={
         *    "method"="POST",
@@ -228,7 +228,7 @@ Si on execute la commande ci-dessous, on verra des données en format yaml qui c
 
 - On va mettre une petite description a notre api via OpenApi
 
-- Dans `"publish"`, on commence par écrire `"openapi_context"` et dedans on va lui passé un objet qui contient des spécifités de notre api
+- Dans `"publish"`, on commence par écrire `"openapi_context"` et dedans on va lui passé un objet qui contient des spécifités de notre api pour cette opération
 
     - `"summary"` permet d'écrire un petit résumé 
 
