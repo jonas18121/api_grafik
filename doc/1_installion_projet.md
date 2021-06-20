@@ -1,3 +1,10 @@
+# ApiPlateform
+
+Le composant serveur d'API Plateform : les API hypermédia et GraphQL en quelques minutes
+
+Github ApiPlateform/core : https://github.com/api-platform/core
+
+
 # Installation du projet avec Symphony 4.4 et ApiPlateform
 
 - En ligne de commande, on installe Symfony 4.4
