@@ -35,3 +35,5 @@ services:
         autoconfigure: false
 
     
+    App\DataProvider\DependencyDataProvider:
+        arguments: ['%kernel.project_dir%']
