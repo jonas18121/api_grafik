@@ -151,7 +151,7 @@ Dans `Dependency.php`
 
 
 
-- La fonction `supports()` est appeler en premier lorsqu'une requête est faite, il vérifie si les données reçu dans la variable `$resourceClass` sont bien de type `Dependency`, 
+- La fonction `supports()` est appeler en premier lorsqu'une requête est faite, il vérifie si les données reçu dans la variable `$resourceClass` sont bien de type `Dependency`
 
     - Si c'est `true`, on pourra continuer le processus et excétuter les fonctions `getCollection()` et `getItem()`, au choix
 
@@ -228,7 +228,7 @@ Dans `Dependency.php`
 
 - Dans `getItem()`
 
-    - le deuxième argument `$id` est ce qu' va passer, exemple notre uuid, qu'on va passer depuis le client
+    - le deuxième argument `$id` est ce qu'on va passer, exemple notre uuid, qu'on va passer depuis le client
 
     - `$dependencies = $this->getDependencies(); ` On recupère les dépendances qui sont dans l'objet `'require'` du fichier `composer.json`
 
