@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @ApiResource(
@@ -11,7 +12,8 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *      paginationEnabled=false,
  * 
  *      collectionOperations={
- *          "get"
+ *          "get",
+ *          "post"
  *      },
  * 
  *      itemOperations={
@@ -52,9 +54,9 @@ class Dependency
      */
     private string $version;
 
-    public function __construct(string $uuid, string $name, string $version)
+    public function __construct( string $name, string $version)
     {
-        $this->uuid = $uuid;
+        $this->uuid = Uuid::uuid5(Uuid::NAMESPACE_URL, $name)->toString();
         $this->name = $name;
         $this->version = $version;
     }
