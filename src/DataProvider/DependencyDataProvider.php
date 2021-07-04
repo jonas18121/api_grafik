@@ -7,18 +7,31 @@ use App\Entity\Dependency;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
+use App\Repository\DependencyRepository;
 
 class DependencyDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface, ItemDataProviderInterface
 {
-    /**
-     * chemin racine du projet
-     */
-    private string $rootPath;
 
-    public function __construct(string $rootPath)
+    private DependencyRepository $repository;
+
+    public function __construct(DependencyRepository $repository)
     {
-        $this->rootPath = $rootPath;
+        $this->repository = $repository;
     }
+
+
+
+
+
+    // /**
+    //  * chemin racine du projet
+    //  */
+    // private string $rootPath;
+
+    // public function __construct(string $rootPath)
+    // {
+    //     $this->rootPath = $rootPath;
+    // }
 
     /**
      * Récupère les dépandances qui son dans le fichier composer.json
@@ -27,13 +40,13 @@ class DependencyDataProvider implements ContextAwareCollectionDataProviderInterf
      *
      * @return void
      */
-    public function getDependencies() : array
-    {
-        $path = $this->rootPath . '/composer.json';
-        $json = json_decode(file_get_contents($path), true);
+    // public function getDependencies() : array
+    // {
+    //     $path = $this->rootPath . '/composer.json';
+    //     $json = json_decode(file_get_contents($path), true);
 
-        return $json['require'];
-    }
+    //     return $json['require'];
+    // }
     
     /**
      * Récupéré la liste des dépandances qui sont dans l'objet require{} du fichier composer.json
@@ -45,16 +58,7 @@ class DependencyDataProvider implements ContextAwareCollectionDataProviderInterf
      */
     public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
     {
-        $dependencies = $this->getDependencies();        
-
-        $items = [];
-
-        foreach ($dependencies as $name => $version) {
-
-            $items[] = new Dependency($name, $version);
-        }
-
-        return $items;
+        return $this->repository->findAll();
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []) : bool
@@ -73,18 +77,6 @@ class DependencyDataProvider implements ContextAwareCollectionDataProviderInterf
      */
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
     {
-        $dependencies = $this->getDependencies(); 
-
-        foreach ($dependencies as $name => $version) {
-
-            $uuid = Uuid::uuid5(Uuid::NAMESPACE_URL, $name)->toString();
-
-            if($uuid === $id){
-
-                return new Dependency($uuid, $name, $version);
-            }
-
-            return null;
-        }
+        return $this->repository->find($id);
     }
 }
