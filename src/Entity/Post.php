@@ -17,7 +17,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 // curl -X GET "http://127.0.0.1:8000/api/posts?page=1" -H "accept: application/json"
 
 
-// vidéo 10 stopper a 00:03:29
+// vidéo 10 fait entre a 00:03:29 et 00:11:11
 
 
 /**
