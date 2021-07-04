@@ -27,7 +27,8 @@
         "symfony/serializer": "4.4.*",
         "symfony/twig-bundle": "4.4.*",
         "symfony/validator": "4.4.*",
-        "symfony/yaml": "4.4.*"
+        "symfony/yaml": "4.4.*",
+        "dependance de test": "8.2.*"
     },
     "config": {
         "preferred-install": {
@@ -37,12 +38,12 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "App": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/"
+            "AppTests": "tests/"
         }
     },
     "replace": {

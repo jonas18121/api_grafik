@@ -2,11 +2,19 @@
 
 namespace App\DataPersister;
 
-use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Entity\Dependency;
+use App\Repository\DependencyRepository;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 
 class DependencyDataPersister implements ContextAwareDataPersisterInterface 
 {
+    private DependencyRepository $repository;
+
+    public function __construct(DependencyRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+    
     /**
      * Vérifier si la variable $data est une instance de  Dependency
      * {@inheritdoc}
@@ -23,7 +31,7 @@ class DependencyDataPersister implements ContextAwareDataPersisterInterface
      */
     public function persist($data, array $context = [])
     {
-
+        $this->repository->persist($data);
     }
 
     /**

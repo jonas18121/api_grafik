@@ -1,4 +1,4 @@
-# Créer un DataPersister personnaliser
+# Créer un DataPersister personnaliser partie 1
 
 On va Créer un DataPersister personnaliser, pour sauvegarder une nouvelle dépendance dans notre fichier composer.json 
 
@@ -51,6 +51,46 @@ Pour géré cela, on va creer manuellement une nouvelle classe nommé `Dependenc
 
 Dans `DataPersister/DependencyDataPersister.php`
 
+
+
+    namespace App\DataPersister;
+
+    use App\Entity\Dependency;
+    use App\Repository\DependencyRepository;
+    use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+
+    class DependencyDataPersister implements ContextAwareDataPersisterInterface 
+    {
+        
+        /**
+        * Vérifier si la variable $data est une instance de  Dependency
+        * {@inheritdoc}
+        */
+        public function supports($data, array $context = []): bool
+        {
+            return $data instanceof Dependency;
+        }
+
+        /**
+        * Permet de sauvegarder nos données dans la BDD,
+        * Nous on ne va pas sauvegarder nos données dans la BDD, on va les sauvegarder dans le fichier composer.json
+        * {@inheritdoc}
+        */
+        public function persist($data, array $context = [])
+        {
+            
+        }
+
+        /**
+        * permet de supprimer des données
+        * Pour nous, on supprimera nos dependances
+        * {@inheritdoc}
+        */
+        public function remove($data, array $context = [])
+        {
+
+        }
+    }
 
 
 

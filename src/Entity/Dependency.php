@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
@@ -40,6 +41,9 @@ class Dependency
      *          "description"="Nom de la dépendance"
      *      }
      * )
+     * 
+     * @Assert\Length(min = 2, minMessage = "Le nom de la dépendance doit comporter au minimum 2 caractères" )
+     * @Assert\NotBlank
      */
     private string $name;
 
@@ -51,12 +55,15 @@ class Dependency
      *          "example"="5.2.*"
      *      }
      * )
+     * 
+     * @Assert\Length(min = 2, minMessage = "La version de la dépendance doit comporter au minimum 2 caractères" )
+     * @Assert\NotBlank
      */
     private string $version;
 
-    public function __construct( string $name, string $version)
+    public function __construct(string $name, string $version, string $uuid = null)
     {
-        $this->uuid = Uuid::uuid5(Uuid::NAMESPACE_URL, $name)->toString();
+        $this->uuid = $uuid === null ? Uuid::uuid5(Uuid::NAMESPACE_URL, $name)->toString() : $uuid;
         $this->name = $name;
         $this->version = $version;
     }
