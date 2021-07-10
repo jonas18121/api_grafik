@@ -96,4 +96,21 @@ class DependencyRepository
 
         file_put_contents($this->rootPathComposer, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
+
+
+    /**
+     * permet de supprimer des donnée
+     *
+     * @param Dependency $dependency
+     * @return void
+     */
+    public function remove(Dependency $dependency)
+    {
+        $json = json_decode(file_get_contents($this->rootPathComposer), true);
+        
+        //supprime la clé qui correspond au nom de la dépendance
+        unset($json['require'][$dependency->getName()]);
+
+        file_put_contents($this->rootPathComposer, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    }
 }
