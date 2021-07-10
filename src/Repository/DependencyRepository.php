@@ -63,19 +63,17 @@ class DependencyRepository
     {
         $dependencies = $this->getDependencies(); 
 
-        
         foreach ($dependencies as $name => $version) {
             
             $uuid = Uuid::uuid5(Uuid::NAMESPACE_URL, $name)->toString();
-            
+
             if($uuid === $id){
                 
                 return new Dependency($name, $version, $uuid);
             }
-            
-
-            return null;
         }
+        
+        return null;
     }
 
     /*
