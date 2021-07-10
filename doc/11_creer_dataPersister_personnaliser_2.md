@@ -22,6 +22,8 @@ On cree `DependencyRepository.php`, qui va imiter un repository pour doctrine , 
 
         - Dans la fonction `getItem()` de `DependencyDataProvider.php`, on va mettre `return $this->repository->find($id);` pour utiliser la fonction `find()` de `DependencyRepository.php`
 
+#### persist()
+
 - On crée la fonction `persist()` et dedans :
 
     - `$json = json_decode(file_get_contents($this->rootPathComposer), true);`, on recupère les dépendances qui sont déjà présent dans le fichier composer, on décode le fichier composer en tableau
@@ -33,6 +35,20 @@ On cree `DependencyRepository.php`, qui va imiter un repository pour doctrine , 
         - `JSON_PRETTY_PRINT` permet d'avoir un fichier composer bien indenter en format json
 
         - `JSON_UNESCAPED_SLASHES` permet d'enlever les antiSlashes, que `json_encode()` a rajouter inutilement lors de cette opération 
+
+#### remove()
+
+- On crée la fonction `remove()` et dedans :
+
+    - `$json = json_decode(file_get_contents($this->rootPathComposer), true);`, on recupère les dépendances qui sont déjà présent dans le fichier composer, on décode le fichier composer en tableau
+
+    - `unset($json['require'][$dependency->getName()]);`, On supprime la clé qui correspond au nom de la dépendance
+
+    - `file_put_contents($this->rootPathComposer, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));` on réécrit le fichier composer sans la dépendance qui a été supprimer et on encode le fichier composer pour qu'il redevienne en format json
+
+        - `JSON_PRETTY_PRINT` permet d'avoir un fichier composer bien indenter en format json
+
+        - `JSON_UNESCAPED_SLASHES` permet d'enlever les antiSlashes, que `json_encode()` a rajouter inutilement lors de cette opération
 
 Dans `DependencyRepository.php`
 
@@ -108,10 +124,9 @@ Dans `DependencyRepository.php`
                     
                     return new Dependency($name, $version, $uuid);
                 }
-                
-
-                return null;
             }
+            
+            return null;
         }
 
 
@@ -125,6 +140,23 @@ Dans `DependencyRepository.php`
         {
             $json = json_decode(file_get_contents($this->rootPathComposer), true);
             $json['require'][$dependency->getName()] = $dependency->getVersion();
+
+            file_put_contents($this->rootPathComposer, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        }
+
+
+        /**
+        * permet de supprimer des donnée
+        *
+        * @param Dependency $dependency
+        * @return void
+        */
+        public function remove(Dependency $dependency)
+        {
+            $json = json_decode(file_get_contents($this->rootPathComposer), true);
+            
+            //supprime la clé qui correspond au nom de la dépendance
+            unset($json['require'][$dependency->getName()]);
 
             file_put_contents($this->rootPathComposer, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         }
@@ -251,7 +283,7 @@ Dans `DataPersister/DependencyDataPersister.php`
         */
         public function remove($data, array $context = [])
         {
-
+            $this->repository->remove($data);
         }
     }
 
@@ -259,6 +291,47 @@ Dans `DataPersister/DependencyDataPersister.php`
 ### Dans Dependency.php
 
 - On rajoute quelques règles de validation avec `use Symfony\Component\Validator\Constraints as Assert;`
+
+#### Verbe HTTP PUT
+
+- On va rajouter la possibilité de faire des opérations avec le verbe http `put` dans itemOperations
+
+- Pour faire des opérations avec le verbe http `put` dans itemOperations, on va `rajouter des setters` pour les propriétés qu'on veut modifier
+
+- Dans `"put"={}` : 
+
+    - On va rajouter un groupe de dénormalisation `denormalization_context` pour que l'opération avec le verbe http `put` ai accès seulement aux propriétés qui auront le nom de ce groupe `"write:put:Dependency:item"` en annotation pour les `modifiés`
+
+    - On va rajouter un groupe de normalisation `normalization_context` pour que l'opération avec le verbe http `put` ai accès seulement aux propriétés qui auront le nom de ce groupe `"read:put:Dependency:item"` en annotation pour les `affichés`
+
+    - Le `DependencyDataProvider` va être appeler avec la methode `find()` pour fournir les données puis le `DependencyDataPersister` va être appeler pour enregistrer les données qui seront modifier avec la methode `persiste()` 
+
+        "put"={
+            "normalization_context"={
+                "groups"={"read:put:Dependency:item"},
+                "openapi_definition_name"="read_put_one_dependency"
+            },
+            "denormalization_context"={
+                "groups"={"write:put:Dependency:item"},
+                "openapi_definition_name"="write_put_one_dependency"
+            }
+        },
+
+        ....
+
+         /**
+          ....
+
+          @Groups({"write:put:Dependency:item", "read:put:Dependency:item"}) 
+        */
+        private string $version;
+
+#### Verbe HTTP DELETE
+
+- On va rajouter la possibilité de faire des opérations avec le verbe http `delete` dans itemOperations
+
+- le `DependencyDataPersister` va être appeler pour supprimer des données avec la methode `remove()` 
+
 
 Dans `Dependency.php`
 
@@ -268,6 +341,7 @@ Dans `Dependency.php`
     use ApiPlatform\Core\Annotation\ApiResource;
     use Ramsey\Uuid\Uuid;
     use Symfony\Component\Validator\Constraints as Assert;
+    use Symfony\Component\Serializer\Annotation\Groups;
 
     /**
     * @ApiResource(
@@ -280,7 +354,18 @@ Dans `Dependency.php`
     *      },
     * 
     *      itemOperations={
-    *          "get"
+    *          "get",
+    *          "delete",
+    *          "put"={
+    *              "normalization_context"={
+    *                  "groups"={"read:put:Dependency:item"},
+    *                  "openapi_definition_name"="read_put_one_dependency"
+    *              },
+    *              "denormalization_context"={
+    *                  "groups"={"write:put:Dependency:item"},
+    *                  "openapi_definition_name"="write_put_one_dependency"
+    *              }
+    *          },
     *      }
     * )
     */
@@ -320,5 +405,62 @@ Dans `Dependency.php`
         * 
         * @Assert\Length(min = 2, minMessage = "La version de la dépendance doit comporter au minimum 2 caractères" )
         * @Assert\NotBlank
+        * @Groups({"write:put:Dependency:item", "read:put:Dependency:item"}) 
         */
         private string $version;
+
+        public function __construct(string $name, string $version, string $uuid = null)
+        {
+            $this->uuid = $uuid === null ? Uuid::uuid5(Uuid::NAMESPACE_URL, $name)->toString() : $uuid;
+            $this->name = $name;
+            $this->version = $version;
+        }
+
+        /**
+        * Get the value of uuid
+        */ 
+        public function getUuid()
+        {
+            return $this->uuid;
+        }
+
+        /**
+        * Get openapiContext={
+        */ 
+        public function getName()
+        {
+            return $this->name;
+        }
+
+        /**
+        * Get openapiContext={
+        */ 
+        public function getVersion()
+        {
+            return $this->version;
+        }
+
+        /**
+        * Set openapiContext={
+        *
+        * @return  self
+        */ 
+        public function setName($name)
+        {
+            $this->name = $name;
+
+            return $this;
+        }
+
+        /**
+        * Set openapiContext={
+        *
+        * @return  self
+        */ 
+        public function setVersion($version)
+        {
+            $this->version = $version;
+
+            return $this;
+        }
+    }
