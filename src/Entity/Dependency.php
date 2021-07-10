@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
@@ -18,7 +19,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  * 
  *      itemOperations={
- *          "get"
+ *          "get",
+ *          "delete",
+ *          "put"={
+ *              "normalization_context"={
+ *                  "groups"={"read:put:Dependency:item"},
+ *                  "openapi_definition_name"="read_put_one_dependency"
+ *              },
+ *              "denormalization_context"={
+ *                  "groups"={"write:put:Dependency:item"},
+ *                  "openapi_definition_name"="write_put_one_dependency"
+ *              }
+ *          },
  *      }
  * )
  */
@@ -58,6 +70,7 @@ class Dependency
      * 
      * @Assert\Length(min = 2, minMessage = "La version de la dépendance doit comporter au minimum 2 caractères" )
      * @Assert\NotBlank
+     * @Groups({"write:put:Dependency:item", "read:put:Dependency:item"}) 
      */
     private string $version;
 
@@ -90,5 +103,29 @@ class Dependency
     public function getVersion()
     {
         return $this->version;
+    }
+
+    /**
+     * Set openapiContext={
+     *
+     * @return  self
+     */ 
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Set openapiContext={
+     *
+     * @return  self
+     */ 
+    public function setVersion($version)
+    {
+        $this->version = $version;
+
+        return $this;
     }
 }
