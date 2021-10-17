@@ -54,7 +54,7 @@ class DependencyRepository
 
 
     /**
-     * recupéré une dépandance en particulier qui est l'objet require{} du fichier composer.json
+     * recupéré une dépandance en particulier qui est dans l'objet require{} du fichier composer.json
      *
      * @param string $id
      * @return Dependency|null
@@ -99,7 +99,7 @@ class DependencyRepository
 
 
     /**
-     * permet de supprimer des donnée
+     * permet de supprimer des données
      *
      * @param Dependency $dependency
      * @return void
