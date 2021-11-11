@@ -33,6 +33,18 @@ class OpenApiFactory implements OpenApiFactoryInterface
         //exemple de création d'une nouvelle route qui sera afficher dans OpenApi
         $openApi->getPaths()->addPath('/ping', new PathItem(null, 'ping', null, new Operation('ping-id', [], [], 'Répond')));
 
+
+
+        $schemas = $openApi->getComponents()->getSecuritySchemes();
+        $schemas["cookieAuth"] = new \ArrayObject([
+            "type"  => "apiKey",
+            "in"    => "cookie",
+            "name"  => "PHPSESSID"
+        ]);
+
+        $openApi = $openApi->withSecurity(["cookieAuth" => []]);
+        // dd($openApi);
+
         return $openApi;
     }
 }
