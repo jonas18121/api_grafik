@@ -2,12 +2,53 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use App\Controller\MeController;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use ApiPlatform\Core\Action\NotFoundAction;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\DependencyInjection\Loader\Configurator\security;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * 
+ * @ApiResource(
+ * 
+ *      attributes={
+ *          "security"="is_granted('ROLE_USER')"
+ *      },
+ * 
+ *      normalizationContext={
+ *          "groups"={"read:User:collection"},
+ *          "openapi_definition_name"="List_users"
+ *      },
+ * 
+ *      collectionOperations={
+ *          
+ *          "me"={
+ *              "pagination_enabled"=false,
+ *              "path"="/me",
+ *              "method"="get",
+ *              "controller"=MeController::class,
+ *              "read"=false,
+ *              "security"="is_granted('ROLE_USER')"
+ *          },
+ *      },
+ * 
+ *      itemOperations={
+ * 
+ *          "get"={
+ *              "controller"="NotFoundAction::class",
+ *              "openapi_context"={
+ *                  "summary"="hidden"
+ *              },
+ *              "read"=false,
+ *              "output"=false
+ *          }
+ *      }
+ * )
  */
 class User implements UserInterface
 {
@@ -15,16 +56,19 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"read:User:collection"}) 
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Groups({"read:User:collection"}) 
      */
     private $email;
 
     /**
      * @ORM\Column(type="json")
+     * @Groups({"read:User:collection"}) 
      */
     private $roles = [];
 
