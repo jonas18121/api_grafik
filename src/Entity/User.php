@@ -16,9 +16,8 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\security;
  * 
  * @ApiResource(
  * 
- *      attributes={
- *          "security"="is_granted('ROLE_USER')"
- *      },
+ * 
+ *      security="is_granted('ROLE_USER')",
  * 
  *      normalizationContext={
  *          "groups"={"read:User:collection"},
@@ -33,7 +32,11 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\security;
  *              "method"="get",
  *              "controller"=MeController::class,
  *              "read"=false,
- *              "security"="is_granted('ROLE_USER')"
+ *              "openapi_context"={
+ *                  "security"={
+ *                      "cookieAuth"={ }
+ *                  }
+ *              }
  *          },
  *      },
  * 
